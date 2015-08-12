@@ -701,25 +701,25 @@ def check_probability(p, N):
 def log_viterbi(a,t_table,pi,N,o,d, word_classes_dict,num_classes):
     V = zeros((2*N+1,len(o)))
     ptr = zeros((2*N+1,len(o)))
-    newd = []
+    new_d = []
 
     for i in range(len(d)):
-        newd.append(d[i])
+        new_d.append(d[i])
     for i in range(len(d), 2*len(d)):
-        newd.append('null')
+        new_d.append('null')
 
 
     #print 'french sentence ', o, ' english sentence ', d, ' new english ', newd, ' pi ', pi
     #print 'N', N, ' ', len(newd)
     for q in range(1,2*N+1):
-        if (o[0],newd[q-1]) in t_table:
-            if t_table[(o[0],newd[q-1])] == 0 or pi[q] == 0:
+        if (o[0],new_d[q-1]) in t_table:
+            if t_table[(o[0],new_d[q-1])] == 0 or pi[q] == 0:
                 V[(q,0)] = -sys.maxint
             else:
-                V[(q,0)] = log(t_table[(o[0],newd[q-1])])#log(pi[q])+log(t_table[(o[0],newd[q-1])])
+                V[(q,0)] = log(t_table[(o[0],new_d[q-1])])#log(pi[q])+log(t_table[(o[0],newd[q-1])])
         else:
             #
-            if newd[q-1] == 'null' :
+            if new_d[q-1] == 'null' :
                 #print 'q ', q, ' ', pi[q], ' ', null_emission_prob
                 V[(q,0)] = log(null_emission_prob)#log(pi[q])+log(null_emission_prob)
             else:
@@ -738,27 +738,27 @@ def log_viterbi(a,t_table,pi,N,o,d, word_classes_dict,num_classes):
                 #else:
                 #    C_d_q_prime = word_classes_dict[newd[q_prime-1]]
 
-                if newd[q-1] != 'null' and newd[q_prime-1] != 'null':
-                    C_d_q_prime = word_classes_dict[newd[q_prime-1]]
-                    if (o[t],newd[q-1]) in t_table:
-                        if a[(q_prime,q,C_d_q_prime,N)] != 0 and t_table[(o[t],newd[q-1])] != 0 :
-                            if V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],newd[q-1])]) > maximum :
-                                maximum = V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],newd[q-1])])
+                if new_d[q-1] != 'null' and new_d[q_prime-1] != 'null':
+                    C_d_q_prime = word_classes_dict[new_d[q_prime-1]]
+                    if (o[t],new_d[q-1]) in t_table:
+                        if a[(q_prime,q,C_d_q_prime,N)] != 0 and t_table[(o[t],new_d[q-1])] != 0 :
+                            if V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],new_d[q-1])]) > maximum :
+                                maximum = V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],new_d[q-1])])
                                 max_q = q_prime
-                elif newd[q-1] == 'null' and newd[q_prime-1] != 'null':
+                elif new_d[q-1] == 'null' and new_d[q_prime-1] != 'null':
                     #C_d_q_prime = word_classes_dict[newd[q_prime-1]]
                     if V[(q_prime,t-1)]+log(p0H)+log(null_emission_prob) > maximum :
                             maximum = V[(q_prime,t-1)]+log(p0H)+log(null_emission_prob)
                             max_q = q_prime
-                elif newd[q-1] == 'null' and newd[q_prime-1] == 'null':
+                elif new_d[q-1] == 'null' and new_d[q_prime-1] == 'null':
                     if V[(q_prime,t-1)]+log(p0H)+log(null_emission_prob) > maximum :
                             maximum = V[(q_prime,t-1)]+log(p0H)+log(null_emission_prob)
                             max_q = q_prime
-                elif newd[q-1] != 'null' and newd[q_prime-1] == 'null':
-                    C_d_q_prime = word_classes_dict[newd[q_prime-1-N]]
+                elif new_d[q-1] != 'null' and new_d[q_prime-1] == 'null':
+                    C_d_q_prime = word_classes_dict[new_d[q_prime-1-N]]
                     if a[(q_prime,q,C_d_q_prime,N)] != 0 :
-                        if V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],newd[q-1])]) > maximum :
-                            maximum = V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],newd[q-1])])
+                        if V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],new_d[q-1])]) > maximum :
+                            maximum = V[(q_prime,t-1)]+log(a[(q_prime,q,C_d_q_prime,N)])+log(t_table[(o[t],new_d[q-1])])
                             max_q = q_prime
 
             V[q,t] = maximum
